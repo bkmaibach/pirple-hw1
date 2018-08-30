@@ -11,7 +11,6 @@ let server = http.createServer((req, res) => {
     let trimmedPath = path.replace(/^\/+|\/+$/g, '');
 
     let method = req.method.toLowerCase();
-    console.log(method)
 ;    let decoder = new StringDecoder('utf-8');
     let buffer = '';
     req.on('data', (data) => {
@@ -19,7 +18,6 @@ let server = http.createServer((req, res) => {
     });
 
     req.on('end', () => {
-        console.log('On End');
         let payload = buffer + decoder.end();
 
         //Select the handler form the router
@@ -33,8 +31,7 @@ let server = http.createServer((req, res) => {
         //Route the request to the chosen handler with the data
         chosenHandler(data, (statusCode, payload) => {
             //Return the response
-            res.setHeader('Content-Type', 'text/plain');
-
+            res.setHeader('Content-Type', 'application/json');
             let payloadString = JSON.stringify(payload);
             res.writeHead(statusCode);
             res.end(payloadString);
@@ -55,7 +52,6 @@ handlers.notFound = (data, callback) => {
 }
 
 handlers.hello = (data, callback) => {
-    console.log(data.payload);
     payloadObject = JSON.parse(data.payload);
     
     payload = payloadObject.request == 'Say it' && data.method == 'post' ? 
